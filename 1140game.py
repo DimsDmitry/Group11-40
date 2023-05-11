@@ -11,7 +11,8 @@ mw.fill(back)
 BLACK = (0, 0, 0)
 LIGHT_BLUE = (205, 204, 255)
 
-class TextArea():
+
+class TextArea:
     def __init__(self, x, y, width, height, color):
         self.rect = pygame.Rect(x, y, width, height)
         '''rectangle - прямоугольник'''
