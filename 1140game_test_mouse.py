@@ -4,7 +4,6 @@ from random import *
 
 pygame.init()
 
-
 # создание окна игры
 clock = pygame.time.Clock()
 mw = pygame.display.set_mode((500, 500))
@@ -19,11 +18,9 @@ class TextArea:
         self.rect = pygame.Rect(x, y, width, height)
         '''rectangle - прямоугольник'''
         self.fill_color = color
-
     def set_text(self, text, fsize, text_color=BLACK):
         self.text = text
         self.image = pygame.font.Font(None, fsize).render(text, True, text_color)
-
     def draw(self, shift_x, shift_y):
         pygame.draw.rect(mw, self.fill_color, self.rect)
         mw.blit(self.image, (self.rect.x + shift_x, self.rect.y + shift_y))
@@ -42,8 +39,8 @@ ans_card.draw(10, 10)
 while True:
     pygame.display.update()
     for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_q:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
                 num = randint(1, 3)
                 if num == 1:
                     quest_card.set_text('Что изучаешь в Алгоритмике?', 25)
@@ -53,7 +50,7 @@ while True:
                     quest_card.set_text('Что растёт на яблоне?', 35)
                 quest_card.draw(10, 25)
 
-            if event.key == pygame.K_a:
+            if event.button == 3:
                 num = randint(1, 3)
                 if num == 1:
                     ans_card.set_text('Python', 35)
