@@ -29,11 +29,11 @@ class TextArea:
         mw.blit(self.image, (self.rect.x + shift_x, self.rect.y + shift_y))
 
 
-quest_card = TextArea(120, 100, 300, 70, LIGHT_BLUE)
+quest_card = TextArea(120, 100, 350, 70, LIGHT_BLUE)
 quest_card.set_text('Вопрос', 75)
 
 
-ans_card = TextArea(120, 250, 300, 70, LIGHT_BLUE)
+ans_card = TextArea(120, 250, 350, 70, LIGHT_BLUE)
 ans_card.set_text('Ответ', 75)
 
 quest_card.draw(10, 10)
