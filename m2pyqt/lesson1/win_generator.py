@@ -1,3 +1,5 @@
+from random import randint
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 
@@ -21,6 +23,18 @@ line.addWidget(winner, alignment=Qt.AlignCenter)
 line.addWidget(button, alignment=Qt.AlignCenter)
 
 my_win.setLayout(line)
+
+
+def show_winner():
+    # генерация случайного числа и вывод номера победителя
+    number = randint(0, 99)
+    winner.setText(str(number))
+    text.setText(str('Победитель:'))
+
+
+# подписка на событие
+button.clicked.connect(show_winner)
+
 
 my_win.show()
 app.exec()
