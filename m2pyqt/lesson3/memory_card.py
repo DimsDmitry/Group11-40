@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
-from random import shuffle
+from random import *
 
 
 class Question:
@@ -17,6 +17,7 @@ question_list = []
 q1 = Question('Государственный язык Бразилии', 'Португальский', 'Английский', 'Бразильский', 'Испанский')
 q2 = Question('Какого цвета нет на флаге России?', 'Зелёный', 'Белый', 'Синий', 'Красный')
 q3 = Question('Национальная хижина якутов', 'Ураса', 'Юрта', 'Хата', 'Иглу')
+# не менее 7 вопросов
 
 question_list.append(q1)
 question_list.append(q2)
@@ -141,16 +142,20 @@ def check_answer():
     # проверяет вариант ответа, показывает панель ответов
     if answers[0].isChecked():
         show_correct('Верно!')
+        window.score += 1
+        print(f'Статистика: \nВсего вопросов: {window.total}\nПравильных ответов: {window.score}')
+        print(f'Рейтинг: {window.score/window.total * 100}%')
     elif answers[1].isChecked() or answers[2].isChecked() or answers[3].isChecked():
         show_correct('Неверно!')
+        print(f'Рейтинг: {window.score / window.total * 100}%')
 
 
 def next_question():
     # задаёт следующий вопрос из списка
-    window.cur_question += 1  # переход к следующему вопросу
-    if window.cur_question >= len(question_list):
-        window.cur_question = 0  # если список вопросов кончился - идём сначала
-    q = question_list[window.cur_question]
+    window.total += 1
+    print(f'Статистика: \nВсего вопросов: {window.total}\nПравильных ответов: {window.score}')
+    cur_question = randint(0, len(question_list) - 1)
+    q = question_list[cur_question]
     ask(q)
 
 
@@ -167,6 +172,8 @@ window.setWindowTitle('Memory Card')
 window.cur_question = -1
 
 btn_OK.clicked.connect(click_OK)
+window.score = 0  # правильных ответов
+window.total = 0  # всего вопросов
 next_question()
 window.show()
 app.exec()
