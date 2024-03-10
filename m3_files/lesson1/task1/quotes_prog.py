@@ -7,14 +7,18 @@ with open('quotes.txt', 'a', encoding='UTF-8') as file:
     text = '('+author+')'+'\n'
     file.write(text)
 
+with open('quotes.txt', 'r', encoding='UTF-8') as file:
+    text = file.read()
+    print(text)
+
+
 while True:
     answer = input('Хотите добавить ещё цитату? (да/нет)').lower()
     if answer == 'да':
         quote = input('Введите цитату:')
         author = input('Введите автора:')
-        file = open('quotes.txt', 'a', encoding='UTF-8')
-        file.write(quote + '\n' + '('+author+')'+'\n')
-        file.close()
+        with open('quotes.txt', 'a', encoding='UTF-8') as file:
+            file.write(quote + '\n' + '('+author+')'+'\n')
     else:
         break
 
