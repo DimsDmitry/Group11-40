@@ -179,7 +179,7 @@ button_tag_search.clicked.connect(search_tag)
 # запуск приложения
 notes_win.show()
 
-with open("notes_data.json", "r") as file:
+with open("notes_data.json", "r", encoding='UTF-8') as file:
     notes = json.load(file)
 list_notes.addItems(notes)
 
