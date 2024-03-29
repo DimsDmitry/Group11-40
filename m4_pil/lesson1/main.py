@@ -1,13 +1,48 @@
-#подключи нужные модули PIL
+from PIL import Image
+from PIL import ImageFilter
 
-#создай класс ImageEditor
 
-    #создай конструктор класса
+class ImageEditor:
+    def __init__(self, filename):
+        self.filename = filename
+        self.original = None
+        self.changed = list()
 
-    #создай метод "открыть и показать оригинал"
+    def open(self):
+        try:
+            self.original = Image.open(self.filename)
+        except:
+            print('Файл не найден!')
+        self.original.show()
 
-    #создай методы для редактирования оригинала
+    def do_left(self):
+        rotated = self.original.transpose(Image.FLIP_LEFT_RIGHT)
+        self.changed.append(rotated)
 
-#создай объект класса ImageEditor с данными картинки-оригинала
+        # бонус. Автоматический нейминг отредатированных картинок
+        temp_filename = self.filename.split('.')
+        new_filename = temp_filename[0] + str(len(self.changed)) + '.jpg'
 
-#отредактируй изображение и сохрани результат
+        rotated.save(new_filename)
+
+    # бонус. образать детёныша коалы
+    def do_cropped(self):
+        box = (250, 100, 600, 400)  # лево, верх, право, низ
+        cropped = self.original.crop(box)
+        self.changed.append(cropped)
+
+        # бонус. Автоматический нейминг отредатированных картинок
+        temp_filename = self.filename.split('.')
+        new_filename = temp_filename[0] + str(len(self.changed)) + '.jpg'
+
+        cropped.save(new_filename)
+
+
+MyImage = ImageEditor('photo.jpg')
+MyImage.open()
+
+MyImage.do_left()
+MyImage.do_cropped()
+
+for im in MyImage.changed:
+    im.show()

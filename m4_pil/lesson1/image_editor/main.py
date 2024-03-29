@@ -1,32 +1,36 @@
-# подключи нужные модули PIL
 from PIL import Image
 from PIL import ImageFilter
-# создай класс ImageEditor
-class ImageEditor():
-    # создай конструктор класса
-    def __init__(self, filename):
-        self.filename = filename
-        self.original = None
-        self.changed = []
+# для бонусной задачи
+from PIL import ImageEnhance
 
-    # создай метод "открыть и показать оригинал"
-    def open(self):
-        try:
-            self.original = Image.open(self.filename)
-        except:
-            print('Файл не найден!')
-        self.original.show()
+with Image.open('original.jpg') as pic_original:
+    print('Изображение открыто\nРазмер:', pic_original.size)
+    print('Формат:', pic_original.format)
+    print('Тип:', pic_original.mode)  # цветное
+    pic_original.show()
 
-    def do_left(self):
-        rotated = self.original.transpose(Image.FLIP_LEFT_RIGHT)
-        self.changed.append(rotated)
+    pic_gray = pic_original.convert('L')
+    pic_gray.save('gray.jpg')
+    print('Изображение создано\nРазмер:', pic_gray.size)
+    print('Формат:', pic_gray.format)
+    print('Тип:', pic_gray.mode)  # чб
+    pic_gray.show()
 
-        filename = self.filename.split('.')
-        filename = filename[0] + str(len(self.changed))
-        rotated.save(filename)
+    pic_blured = pic_original.filter(ImageFilter.BLUR)
+    pic_blured.save('blured.jpg')
+    pic_blured.show()
 
-# создай методы для редактирования оригинала
+    pic_up = pic_original.transpose(Image.ROTATE_180)
+    pic_up.save('up.jpg')
+    pic_up.show()
 
-# создай объект класса ImageEditor с данными картинки-оригинала
+    # бонус 1. Зеркальное отражение.
+    pic_mirrow = pic_original.transpose(Image.FLIP_LEFT_RIGHT)
+    pic_mirrow.save('mirrow.jpg')
+    pic_mirrow.show()
 
-# отредактируй изображение и сохрани результат
+    # бонус 2. Увеличение контраста.
+    pic_contrast = ImageEnhance.Contrast(pic_original)
+    pic_contrast = pic_contrast.enhance(1.5)
+    pic_contrast.save('contr.jpg')
+    pic_contrast.show()
