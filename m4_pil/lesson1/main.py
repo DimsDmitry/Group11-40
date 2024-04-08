@@ -19,7 +19,7 @@ class ImageEditor:
         rotated = self.original.transpose(Image.FLIP_LEFT_RIGHT)
         self.changed.append(rotated)
 
-        # бонус. Автоматический нейминг отредатированных картинок
+        # Автоматический нейминг отредатированных картинок
         temp_filename = self.filename.split('.')
         new_filename = temp_filename[0] + str(len(self.changed)) + '.jpg'
 

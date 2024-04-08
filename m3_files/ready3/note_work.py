@@ -1,5 +1,6 @@
 '''Функционал приложения'''
 
+
 def show_note():
     key = list_notes.selectedItems()[0].text()
     print(key)
