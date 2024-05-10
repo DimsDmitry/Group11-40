@@ -34,7 +34,7 @@ row_tools.addWidget(btn_sharp)
 row_tools.addWidget(btn_bw)
 col2.addLayout(row_tools)
 
-row.addLayout(col1, 20)
+row.addLayout(col1, 30)
 row.addLayout(col2, 80)
 win.setLayout(row)
 
@@ -43,7 +43,12 @@ win.show()
 workdir = ''
 
 
-def filter(files, extensions):
+def chooseWorkdir():
+    global workdir
+    workdir = QFileDialog.getExistingDirectory()
+
+
+def file_filter(files, extensions):
     result = []
     for filename in files:
         for ext in extensions:
@@ -52,26 +57,21 @@ def filter(files, extensions):
     return result
 
 
-def chooseWorkdir():
-    global workdir
-    workdir = QFileDialog.getExistingDirectory()
-
-
 def showFilenamesList():
-    extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.txt']
+    extensions = '.jpg .jpeg .png .gif .bmp .txt .JPG .fif'.split()
     chooseWorkdir()
-    filenames = filter(os.listdir(workdir), extensions)
+    filenames = file_filter(os.listdir(workdir), extensions)
     lw_files.clear()
-    for filename in filenames:
-        lw_files.addItem(filename)
+    for name in filenames:
+        lw_files.addItem(name)
 
 
 def showChosenImage():
-    if lw_files.currentRow >= 0:
+    if lw_files.currentRow() >= 0:
         filename = lw_files.currentItem().text()
-        workimage.loadImage(workdir, filename)
-        image_path = os.path.join(workimage.dir, workimage.filename)
-        workimage.showImage(image_path)
+        workImage.LoadImage(workdir, filename)
+        image_path = os.path.join(workImage.dir, workImage.filename)
+        workImage.showImage(image_path)
 
 
 class ImageProcessor:
@@ -112,36 +112,36 @@ class ImageProcessor:
         self.image = self.image.transpose(Image.FLIP_LEFT_RIGHT)
         self.saveImage()
         image_path = os.path.join(workdir, self.save_dir, self.filename)
-        self.saveImage(image_path)
+        self.showImage(image_path)
 
     def do_sharpen(self):
         self.image = self.image.filter(SHARPEN)
         self.saveImage()
         image_path = os.path.join(workdir, self.save_dir, self.filename)
-        self.saveImage(image_path)
+        self.showImage(image_path)
 
     def do_left(self):
         self.image = self.image.transpose(Image.ROTATE_270)
         self.saveImage()
         image_path = os.path.join(workdir, self.save_dir, self.filename)
-        self.saveImage(image_path)
+        self.showImage(image_path)
 
     def do_right(self):
         self.image = self.image.transpose(Image.ROTATE_90)
         self.saveImage()
         image_path = os.path.join(workdir, self.save_dir, self.filename)
-        self.saveImage(image_path)
+        self.showImage(image_path)
 
 
-workimage = ImageProcessor()
+workImage = ImageProcessor()
 btn_dir.clicked.connect(showFilenamesList)
 lw_files.currentRowChanged.connect(showChosenImage)
 
-btn_bw.clicked.connect(workimage.do_bw)
-btn_left.clicked.connect(workimage.do_left)
-btn_right.clicked.connect(workimage.do_right)
-btn_sharp.clicked.connect(workimage.do_sharpen)
-btn_flip.clicked.connect(workimage.do_flip)
+btn_bw.clicked.connect(workImage.do_bw)
+btn_left.clicked.connect(workImage.do_left)
+btn_right.clicked.connect(workImage.do_right)
+btn_sharp.clicked.connect(workImage.do_sharpen)
+btn_flip.clicked.connect(workImage.do_flip)
 
 win.show()
 app.exec()
