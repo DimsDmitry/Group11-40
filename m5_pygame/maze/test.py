@@ -1,2 +1,3 @@
-num = '10'
-print(type(num))
+from random import *
+
+print(random())
