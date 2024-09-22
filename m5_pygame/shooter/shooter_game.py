@@ -5,6 +5,7 @@ score = 0  # сбито кораблей
 lost = 0  # пропущено кораблей
 goal = 30  # количество сбить, которое нужно сбить
 max_lost = 3  # количество сбить, которое можно пропустить
+life = 3  # количество очков здоровья
 
 
 class GameSprite(sprite.Sprite):
@@ -57,6 +58,18 @@ class Enemy(GameSprite):
             lost += 1
 
 
+class Asteroid(GameSprite):
+    """класс-наследник GameSprite, для создания астероида"""
+
+    def update(self):
+        """автоматическое перемещение вниз по карте"""
+        self.rect.y += self.speed
+        # исчезает, если дойдёт до края экрана
+        if self.rect.y > win_height:
+            self.rect.x = randint(80, win_width - 80)
+            self.rect.y = 0
+
+
 class Bullet(GameSprite):
     """класс-наследник GameSprite, для создания пули"""
 
@@ -87,6 +100,7 @@ img_back = 'galaxy.jpg'
 img_hero = 'rocket.png'
 img_enemy = 'ufo.png'
 imb_bullet = 'bullet.png'
+img_asteroid = 'asteroid.png'
 
 # окно игры
 win_width = 700
@@ -98,12 +112,19 @@ background = transform.scale(image.load(img_back), (win_width, win_height))
 
 # создаём спрайты
 ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
+# враги
 monsters = sprite.Group()
 for i in range(5):
     monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
     monsters.add(monster)
-
+# пули
 bullets = sprite.Group()
+
+# астероиды
+asteroids = sprite.Group()
+for i in range(2):
+    asteroid = Asteroid(img_asteroid, randint(30, win_width - 30), -40, 80, 50, randint(1, 7))
+    asteroids.add(asteroid)
 
 # игровой цикл
 finish = False  # вспомогательная переменная
@@ -134,11 +155,15 @@ while run:
         # отрисовываем спрайты, воспроизводим их движение
         ship.update()
         ship.reset()
+
         monsters.update()
         monsters.draw(window)
+
         bullets.update()
         bullets.draw(window)
 
+        asteroids.update()
+        asteroids.draw(window)
         # обработка столкновения пули и противника
         collides = sprite.groupcollide(monsters, bullets, True, True)
         for c in collides:
@@ -146,8 +171,14 @@ while run:
             monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
             monsters.add(monster)
 
-        # поражение - пропустили слишком много противников, или герой столкнулся с врагом
-        if lost >= max_lost or sprite.spritecollide(ship, monsters, False):
+        # если спрайт коснулся врага, уменьшаем очки здоровья
+        if sprite.spritecollide(ship, monsters, False) or sprite.spritecollide(ship, asteroids, False):
+            sprite.spritecollide(ship, monsters, True)
+            sprite.spritecollide(ship, asteroids, True)
+            life -= 1
+
+        # поражение - пропустили слишком много противников, или потеряли все очки здоровья
+        if lost >= max_lost or life == 0:
             # проиграли, ставим фон и отключаем управление спрайтами
             finish = True
             window.blit(lose, (200, 200))
@@ -156,6 +187,17 @@ while run:
         if score >= goal:
             finish = True
             window.blit(win, (200, 200))
+
+        # отображаем текст с количеством здоровья, цвет очков здоровья разный в зависимости от значения
+        if life == 3:
+            life_color = 'lawngreen'
+        if life == 2:
+            life_color = 'gold'
+        if life == 1:
+            life_color = 'red'
+
+        text_life = font1.render(str(life), 1, life_color)
+        window.blit(text_life, (650, 10))
 
         display.update()
     time.delay(50)
