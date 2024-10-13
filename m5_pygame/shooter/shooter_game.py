@@ -1,5 +1,7 @@
 from pygame import *
 from random import randint
+from time import time as timer
+from pygame.font import SysFont
 
 score = 0  # сбито кораблей
 lost = 0  # пропущено кораблей
@@ -89,8 +91,8 @@ fire_sound = mixer.Sound('fire.ogg')
 
 # подключаем шрифт
 font.init()
-font1 = font.Font(None, 80)
-font2 = font.Font(None, 36)
+font1 = font.SysFont('Arial', 80)
+font2 = font.SysFont('Arial', 36)
 
 win = font1.render('ПОБЕДА', True, (255, 255, 255))
 lose = font1.render('ПОРАЖЕНИЕ', True, (191, 0, 0))
@@ -130,6 +132,8 @@ for i in range(2):
 finish = False  # вспомогательная переменная
 run = True  # флаг цикла
 
+reload_time = False  # флаг отвечающий за перезарядку
+num_fire = 0  # счётчик выстрелов
 while run:
     # событие "закрыть игру"
     for e in event.get():
@@ -138,8 +142,15 @@ while run:
         # событие нажатия кнопки на пробел - спрайт стреляет
         elif e.type == KEYDOWN:
             if e.key == K_SPACE:
-                fire_sound.play()
-                ship.fire()
+                # проверяем сколько сделано выстрелов и не идёт ли сейчас перезарядка
+                if num_fire < 5 and not reload_time:
+                    num_fire += 1
+                    fire_sound.play()
+                    ship.fire()
+                if num_fire >= 5 and not reload_time:
+                    # если игрок сделал 5 выстрелов, засекаем время и ставим флаг перезарядки
+                    last_time = timer()
+                    reload_time = True
 
     if not finish:
         # отрисовываем фон и персонажей игры
@@ -164,6 +175,19 @@ while run:
 
         asteroids.update()
         asteroids.draw(window)
+
+        # проверка перезарядки
+        if reload_time:
+            now_time = timer()
+            if now_time - last_time < 3:
+                # если перезарядка не кончилась, выводим информацию о ней
+                reload = font2.render('Перезарядка, ждите...', 1, 'indianred')
+                window.blit(reload, (230, 460))
+            else:
+                # если 3 сек прошло, обнуляем счётчик пуль и снимаем флаг перезарядки
+                num_fire = 0
+                reload_time = False
+
         # обработка столкновения пули и противника
         collides = sprite.groupcollide(monsters, bullets, True, True)
         for c in collides:

@@ -1,9 +1,11 @@
-def do_something(a, b):
-    info = input('Умножить или сложить числа? 1/2')
-    if info == '1':
-        return a * b
-    return a + b
+from time import time as telephon
 
 
-result = do_something(5, 2)
-print(result)
+start = telephon()
+for i in range(1000):
+    print(i)
+
+stop = telephon()
+
+
+print('Прошло времени:', stop-start)
