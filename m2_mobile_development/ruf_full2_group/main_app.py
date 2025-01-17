@@ -6,11 +6,15 @@ from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
 from kivy.uix.scrollview import ScrollView
+
 from instructions import txt_instruction, txt_test1, txt_test2, txt_test3, txt_sits
 from ruffier import test
-
 from seconds import Seconds
+from sits import Sits
+from runner import Runner
 
+Window.clearcolor = (.65, .15, .61, 0.62)
+btn_color = (0.98, 0.31, 0.8, 1)
 
 age = 7
 name = ""
@@ -34,6 +38,7 @@ class InstrScr(Screen):
         lbl2 = Label(text='Введите возраст:', halign='right')
         self.in_age = TextInput(text='7', multiline=False)
         self.btn = Button(text='Начать', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
+        self.btn.background_color = btn_color
         self.btn.on_press = self.next
         line1 = BoxLayout(size_hint=(0.8, None), height='30sp')
         line2 = BoxLayout(size_hint=(0.8, None), height='30sp')
@@ -51,7 +56,7 @@ class InstrScr(Screen):
     def next(self):
         name = self.in_name.text
         age = check_int(self.in_age.text)
-        if age == False or age < 7:
+        if not age or age < 7:
             age = 7
             self.in_age.text = str(age)
         else:
@@ -77,6 +82,7 @@ class PulseScr(Screen):
         line.add_widget(self.in_result)
         self.btn = Button(text='Начать', size_hint=(0.3, 0.4), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
+        self.btn.background_color = btn_color
         outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         outer.add_widget(instr)
         # outer.add_widget(lbl1)
@@ -98,7 +104,7 @@ class PulseScr(Screen):
         else:
             global p1
             p1 = check_int(self.in_result.text)
-            if p1 == False or p1 <= 0:
+            if not p1 or p1 <= 0:
                 p1 = 0
                 self.in_result.text = str(p1)
             else:
@@ -109,12 +115,23 @@ class CheckSits(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         instr = Label(text=txt_sits)
+
+        self.lbl_sits = Sits(30)
+        # self.run = Runner()
+
         self.btn = Button(text='Продолжить', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
-        outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
-        outer.add_widget(instr)
-        outer.add_widget(self.btn)
-        self.add_widget(outer)
+        self.btn.background_color = btn_color
+
+        line = BoxLayout()
+        vlay = BoxLayout(orientation='vertical', padding=8, spacing=8)
+
+        line.add_widget(instr)
+        line.add_widget(self.lbl_sits)
+        # line.add_widget(self.run)
+        vlay.add_widget(line)
+        vlay.add_widget(self.btn)
+        self.add_widget(vlay)
 
     def next(self):
         self.manager.current = 'pulse2'
@@ -146,6 +163,7 @@ class PulseScr2(Screen):
         line2.add_widget(self.in_result2)
         self.btn = Button(text='Начать', size_hint=(0.3, 0.5), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
+        self.btn.background_color = btn_color
         outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         outer.add_widget(instr)
         outer.add_widget(self.lbl1)
@@ -185,7 +203,7 @@ class PulseScr2(Screen):
             if not p2:
                 p2 = 0
                 self.in_result1.text = str(p2)
-            elif p3 == False:
+            elif not p3:
                 p3 = 0
                 self.in_result2.text = str(p3)
             else:

@@ -1,7 +1,7 @@
 # программа с тремя экранами, переключение на третий экран происходит по таймеру
 # таймер включается в методе on_enter второго экрана, т.е. сразу после того, как пользователь зашёл на этот экран
 # см. строку 58
- 
+
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
@@ -22,6 +22,7 @@ long_txt = """Используйте эти советы, чтобы увели�
 4. Концентрируйте внимание на чтении.\n
 Читайте длинные тексты. Уберите отвлекающие факторы. Ищите книги, которые вас захватят. """
 
+
 # класс для аккуратного отображения длинного текста на маленьком экране с прокруткой
 # подробнее ты можешь прочитать в документации к первому уроку
 class ScrollLabel(ScrollView):
@@ -36,6 +37,7 @@ class ScrollLabel(ScrollView):
         self.label.texture_update()
         self.label.height = self.label.texture_size[1]
 
+
 class FirstScr(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -43,30 +45,33 @@ class FirstScr(Screen):
         box.add_widget(Label(text="Попробуйте прочитать текст за " + str(time_to_read) + " секунд(ы)"))
         btn_next = Button(text="Начать", on_press=self.next)
         box.add_widget(btn_next)
-        self.add_widget(box) 
+        self.add_widget(box)
 
     def next(self, *args):
         self.manager.transition.direction = 'up'
-        self.manager.current = 'showtext' 
+        self.manager.current = 'showtext'
+
 
 class ShowText(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         box = BoxLayout(padding=10)
-        box.add_widget(ScrollLabel(long_txt, size_hint_x=0.8, pos_hint={'center_x':0.5})) 
+        box.add_widget(ScrollLabel(long_txt, size_hint_x=0.8, pos_hint={'center_x': 0.5}))
         self.add_widget(box)
-    
+
     def on_enter(self):
         Clock.schedule_once(self.next, time_to_read)
 
     def next(self, dt):
         print("Прошло", dt, "секунд")
-        self.manager.current = 'last' 
+        self.manager.current = 'last'
+
 
 class LastScr(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.add_widget(Label(text="Время!")) 
+        self.add_widget(Label(text="Время!"))
+
 
 class MyApp(App):
     def build(self):
@@ -75,6 +80,7 @@ class MyApp(App):
         sm.add_widget(ShowText(name='showtext'))
         sm.add_widget(LastScr(name='last'))
         return sm
+
 
 app = MyApp()
 app.run()
