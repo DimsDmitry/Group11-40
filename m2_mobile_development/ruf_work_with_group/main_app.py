@@ -114,27 +114,48 @@ class PulseScr(Screen):
 class CheckSits(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.next_screen = False  # флаг доступа к следующему экрану
+
         instr = Label(text=txt_sits)
-
         self.lbl_sits = Sits(30)
-        # self.run = Runner()
+        # создаём объект класса Runner, привязываем к методу self.run_finished
+        self.run = Runner(total=30, steptime=1.5, size_hint=(0.4, 1))
+        self.run.bind(finished=self.run_finished)
 
-        self.btn = Button(text='Продолжить', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
+        self.btn = Button(text='Начать', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
         self.btn.background_color = btn_color
 
+        # лэйауты, размещение виджетов
         line = BoxLayout()
         vlay = BoxLayout(orientation='vertical', padding=8, spacing=8)
+        vlay.add_widget(self.lbl_sits)
 
         line.add_widget(instr)
-        line.add_widget(self.lbl_sits)
-        # line.add_widget(self.run)
-        vlay.add_widget(line)
-        vlay.add_widget(self.btn)
-        self.add_widget(vlay)
+        line.add_widget(vlay)
+        line.add_widget(self.run)
+
+        # главный вертикальный лэйаут
+        main_lay = BoxLayout(orientation='vertical', padding=8, spacing=8)
+        main_lay.add_widget(line)
+        main_lay.add_widget(self.btn)
+
+        self.add_widget(main_lay)
+
+    def run_finished(self, instance, value):
+        self.btn.set_disabled(False)
+        self.btn.text = 'Продолжить'
+        self.next_screen = True
 
     def next(self):
-        self.manager.current = 'pulse2'
+        if not self.next_screen:
+            # если флаг self.next_screen опущен, блокируем кнопку
+            self.btn.set_disabled(True)
+            # и запускаем подсчёт приседаний
+            self.run.start()
+            self.run.bind(value=self.lbl_sits.next)
+        else:
+            self.manager.current = 'pulse2'
 
 
 class PulseScr2(Screen):
