@@ -46,7 +46,7 @@ def set_size(size):
     if size.endswith('M'):
         return float(size[:-1])
     elif size.endswith('k'):
-        return float(size[:-1])/1024
+        return float(size[:-1]) / 1024
     return -1
 
 
@@ -57,5 +57,29 @@ size4 = set_size(size4)
 
 print(size1, size2, size3, size4)
 
+date1 = 'July 18, 2018'
+date2 = 'August 26, 2014'
+date3 = 'November 9, 2017'
+date4 = 'January 21, 2018'
+date5 = 'April 25, 2018'
 
 
+def set_season(date):
+    month = date.split()[0]
+    seasons = {
+        'Зима': 'December January February'.split(),
+        'Весна': 'March April May'.split(),
+        'Лето': 'June July August'.split(),
+        'Осень': 'September October November'.split()
+    }
+    for season in seasons:
+        if month in seasons[season]:
+            return season
+    return 'Сезон не установлен'
+
+
+print(set_season(date1))
+print(set_season(date2))
+print(set_season(date3))
+print(set_season(date4))
+print(set_season(date5))
