@@ -8,6 +8,7 @@ id,sex,bdate,has_photo,has_mobile,followers_count,graduation,education_form,rela
 48095,1,31.10,0,1.0,751.0,2021.0,,0.0,Student (Bachelor's),Русский,0,0,Moscow,2020-04-11 08:47:01,university,ММУ (МУМ),2018,False,1
 4093,2,1.5.1990,0,1.0,112.0,2014.0,Distance Learning,4.0,PhD,Русский,1,2,,2020-11-26 16:03:50,university,СГАСУ (БФ),2010,2015,0
 63172,1,6.6.1990,1,1.0,318.0,2012.0,Full-time,4.0,Student (Bachelor's),False,0,0,Izhevsk,2020-03-21 18:05:54,work,"АКБ ""Ижкомбанк"" ПАО",2007,False,1
+63172,1,6.6.1990,1,1.0,318.0,2012.0,Full-time,4.0,Student (Bachelor's),False,0,0,Izhevsk,2020-03-21 18:05:54,work,"АКБ ""Ижкомбанк"" ПАО",2007,False,1
 63848,1,2.10,1,1.0,294.0,2018.0,Distance Learning,0.0,Student (Specialist),Русский,False,False,Yekaterinburg,2020-12-22 10:06:14,university,УрФУ им. первого Президента России Б. Н. Ельцина,False,False,1
 66760,1,31.1.1990,0,1.0,77.0,2011.0,Full-time,1.0,Student (Bachelor's),False,0,0,,2020-07-04 19:59:45,university,НИУ ВШЭ (ГУ-ВШЭ),False,False,1
 4682,2,20.6,1,1.0,23.0,2007.0,Distance Learning,4.0,Alumnus (Specialist),Русский,0,0,Zheleznovodsk,2020-12-14 10:30:06,university,ЮУ (ИУБиП),False,False,0
