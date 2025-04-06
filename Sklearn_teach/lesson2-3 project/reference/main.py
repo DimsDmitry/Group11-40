@@ -11,7 +11,7 @@ print(df.info())
 
 # данные которые не рассматриваются - их убираем
 # life_main, people_main, city, last_seen, occupation_name
-df = df.drop(['life_main', 'people_main', 'city', 'last_seen', 'occupation_name'], axis=1)
+df = df.drop(['life_main', 'people_main', 'city', 'last_seen', 'occupation_name', 'career_start', 'career_end'], axis=1)
 
 # Замена текстовых данных числовыми -
 # это нужно сделать, тк модели машинного обучения не работают с текстом (это математические алгоритмы)
@@ -112,37 +112,6 @@ def change_occup_type(row):
 
 
 df = df.apply(change_occup_type, axis=1)
-
-print("career_start -", df.career_start.unique())
-
-
-# '1996', '2004' ...
-def change_career_start(row):
-    # та же схема что и с датой рождения (текущий год - год начала карьеры)
-    start = 0
-    if row['career_start'] != 'False':
-        start = 2023 - int(row['career_start'])
-    row['career_start'] = start
-    return row
-
-
-df = df.apply(change_career_start, axis=1)
-
-print("career_end -", df.career_end.unique())
-
-
-# '1996', '2004', 'False' ...
-def change_career_end(row):
-    # та же схема что и с датой рождения (текущий год - год начала карьеры)
-    # 'False' просто меняем на 0, карьера не окончена
-    end = 0
-    if row['career_end'] != 'False':
-        end = 2023 - int(row['career_end'])
-    row['career_end'] = end
-    return row
-
-
-df = df.apply(change_career_end, axis=1)
 
 print(df.info())
 
