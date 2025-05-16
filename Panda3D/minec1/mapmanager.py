@@ -31,6 +31,8 @@ class Mapmanager:
         # передаём координату z и получаем нужный цвет
         self.color = self.get_color(int(position[2]))
         self.block.setColor(self.color)
+        # добавим тег
+        self.block.setTag('at', str(position))
         # привязываем блок к карте
         self.block.reparentTo(self.land)
 
@@ -53,3 +55,44 @@ class Mapmanager:
                     x += 1
                 y += 1
         return x, y
+
+    def findBlocks(self, pos):
+        return self.land.findAllMatches('=at=' + str(pos))
+
+    def isEmpty(self, pos):
+        """позволяет найти все блоки, которые находятся по координате pos"""
+        blocks = self.findBlocks(pos)
+        if blocks:
+            return False
+        return True
+
+    def findHighestEmpty(self, pos):
+        """ищет координаты, по которым перед нами есть пустой блок.
+        это нужно, чтобы понять высоту блоков перед нами - можем ли мы на них зайти"""
+        x, y, z = pos
+        z = 1
+        while not self.isEmpty((x, y, z)):
+            z += 1
+        return x, y, z
+
+    def buildBlock(self, pos):
+        """ставит блок с учётом гравитации"""
+        x, y, z = pos
+        # узнаём координаты самого высокого блока перед нами
+        new = self.findHighestEmpty(pos)
+        if new[2] <= z + 1:
+            self.addBlock(new)
+
+    def delBlock(self, pos):
+        """удаляет блок в указанной позиции"""
+        blocks = self.findBlocks(pos)
+        for block in blocks:
+            block.removeNode()
+
+    def delBlockFrom(self, pos):
+        """удаляет три блока перед нами"""
+        x, y, z = self.findHighestEmpty(pos)
+        pos  = x, y, z - 1
+        blocks = self.findBlocks(pos)
+        for block in blocks:
+            block.removeNode()

@@ -1,5 +1,7 @@
 # клавиши и соответствующие им действия:
 key_switch_camera = 'c'  # камера привязана/отвязана от героя
+# основной игровой режим/режим наблюдателя (нельзя/можно проходить сквозь блоки):
+key_switch_mode = 'z'
 
 key_turn_left = 'n'  # поворот камеры направо (мира - налево)
 key_turn_right = 'm'  # поворот камеры налево (мира - направо)
@@ -8,6 +10,12 @@ key_forward = 'w'  # шаг вперёд (куда смотрит камера)
 key_back = 's'  # шаг назад
 key_left = 'a'  # шаг влево
 key_right = 'd'  # шаг вправо
+
+key_up = 'e'  # шаг вверх
+key_down = 'q'  # шаг вниз
+
+key_build = 'b'  # построить блок перед собой
+key_destroy = 'v'  # разрушить блок перед собой
 
 
 
@@ -27,6 +35,7 @@ class Hero:
     def cameraBind(self):
         """привязать камеру к игроку"""
         base.disableMouse()  # отключаем управление мышью
+        base.camera.setH(180)  # РАЗВОРОТ НА 180 градусов
         base.camera.reparentTo(self.hero)  # привязываем камеру к герою
         base.camera.setPos(0, 0, 1.5)
         self.cameraOn = True
@@ -37,7 +46,7 @@ class Hero:
         # размещаем камеру чуть выше игрока
         base.mouseInterfaceNode.setPos(-pos[0], -pos[1], -pos[2] - 3 )
         base.camera.reparentTo(render)  # привязываем камеру к узлу рендера
-        base.enableMouse()  # включаем мышт
+        base.enableMouse()  # включаем мышь
         self.cameraOn = False
 
     def changeView(self):
@@ -46,6 +55,15 @@ class Hero:
             self.cameraUp()
         else:
             self.cameraBind()
+
+    def changeMode(self):
+        """переключает игровой режим"""
+        if self.mode:
+            self.mode = False
+            print('ОСНОВНОЙ РЕЖИМ')
+        else:
+            self.mode = True
+            print('РЕЖИМ НАБЛЮДАТЕЛЯ')
 
     def turn_left(self):
         """поворот влево"""
@@ -62,13 +80,26 @@ class Hero:
 
     def try_move(self, angle):
         """определяет движение игрока в основном игровом режиме"""
-        pass
+        pos = self.look_at(angle)
+        if self.land.isEmpty(pos):
+            # перед нами свободно, возможно надо упасть вниз
+            pos = self.land.findHighestEmpty(pos)
+            self.hero.setPos(pos)
+        else:
+            # перед нами занято. если получится, заберёмся на блок
+            pos = pos[0], pos[1], pos[2] + 1
+            if self.land.isEmpty(pos):
+                # смотрим - перед нами пусто на блок выше? если да - идём туда
+                self.hero.setPos(pos)
+            # если не получилось забраться, ничего не происходит. стоим на месте
 
     def move_to(self, angle):
         """определяет вид движения в зависимости от свойства self.mode.
         Если self.mode = True, то вызываем метод just_move, иначе метод try_move."""
         if self.mode:
             self.just_move(angle)
+        else:
+            self.try_move(angle)
 
     def look_at(self, angle):
         """возвращает координаты, куда переместится персонаж стоящий в точке (x, y),
@@ -118,6 +149,26 @@ class Hero:
         else:
             return 0, -1
 
+    def build(self):
+        """в зависимости от режима (игровой/основной) вызывает соответствующий метод
+        для установки блока"""
+        angle = (self.hero.getH()) % 360
+        pos = self.look_at(angle)
+        if self.mode:
+            self.land.addBlock(pos)
+        else:
+            self.land.buildBlock(pos)
+
+    def destroy(self):
+        """в зависимости от режима (игровой/основной) вызывает соответствующий метод
+        для удаления блока"""
+        angle = (self.hero.getH()) % 360
+        pos = self.look_at(angle)
+        if self.mode:
+            self.land.delBlock(pos)
+        else:
+            self.land.delBlockFrom(pos)
+
     def forward(self):
         """вперёд"""
         angle = (self.hero.getH()) % 360
@@ -138,9 +189,20 @@ class Hero:
         angle = (self.hero.getH() + 270) % 360
         self.move_to(angle)
 
+    def up(self):
+        """перемещаемся вверх, ТОЛЬКО для режима наблюдателя"""
+        if self.mode:
+            self.hero.setZ(self.hero.getZ() + 1)
+
+    def down(self):
+        """перемещаемся вниз, ТОЛЬКО для режима наблюдателя"""
+        if self.mode:
+            self.hero.setZ(self.hero.getZ() - 1)
+
     def accept_events(self):
         """привязывает клавиши к методам управления игроком"""
         base.accept(key_switch_camera, self.changeView)
+        base.accept(key_switch_mode, self.changeMode)
 
         base.accept(key_turn_left, self.turn_left)
         base.accept(key_turn_right, self.turn_right)
@@ -159,3 +221,12 @@ class Hero:
 
         base.accept(key_right, self.right)
         base.accept(key_right + '-repeat', self.right)
+
+        base.accept(key_up, self.up)
+        base.accept(key_up + '-repeat', self.up)
+
+        base.accept(key_down, self.down)
+        base.accept(key_down + '-repeat', self.down)
+
+        base.accept(key_build, self.build)
+        base.accept(key_destroy, self.destroy)
