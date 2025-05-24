@@ -1,4 +1,5 @@
 from direct.showbase.ShowBase import ShowBase
+import pickle
 
 from mapmanager import Mapmanager
 from hero import Hero

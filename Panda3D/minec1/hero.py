@@ -1,3 +1,6 @@
+import pickle
+
+
 # клавиши и соответствующие им действия:
 key_switch_camera = 'c'  # камера привязана/отвязана от героя
 # основной игровой режим/режим наблюдателя (нельзя/можно проходить сквозь блоки):
@@ -16,6 +19,9 @@ key_down = 'q'  # шаг вниз
 
 key_build = 'b'  # построить блок перед собой
 key_destroy = 'v'  # разрушить блок перед собой
+
+key_savemap = 'k'
+key_loadmap = 'l'
 
 
 
@@ -230,3 +236,6 @@ class Hero:
 
         base.accept(key_build, self.build)
         base.accept(key_destroy, self.destroy)
+
+        base.accept(key_savemap, self.land.saveMap)
+        base.accept(key_loadmap, self.land.loadMap)

@@ -1,3 +1,6 @@
+import pickle
+
+
 class Mapmanager:
     def __init__(self):
         self.model = 'block'
@@ -96,3 +99,31 @@ class Mapmanager:
         blocks = self.findBlocks(pos)
         for block in blocks:
             block.removeNode()
+
+    def saveMap(self):
+        """сохраняет все блоки в бинарный файл"""
+        blocks = self.land.getChildren()
+        # getChildren возвращает коллекцию всех блоков
+        # далее открываем бинарный файл на запись
+        with open('my_map.dat', 'wb') as f:
+            # сохраняем в начало файла кол-во блоков
+            pickle.dump(len(blocks), f)
+            for block in blocks:
+                x, y, z = block.getPos()
+                pos = (int(x), int(y), int(z))
+                pickle.dump(pos, f)
+        print('Карта успешно сохранена.')
+
+    def loadMap(self):
+        """загружает карту"""
+        self.clear()  # сначала удаляем все блоки
+        # далее открываем бинарный файл на чтение
+        with open('my_map.dat', 'rb') as f:
+            # считываем кол-во блоков
+            length = pickle.load(f)
+            for i in range(length):
+                # считываем позицию для каждого блока
+                pos = pickle.load(f)
+                # и создаём каждый блок по отдельности
+                self.addBlock(pos)
+        print('Карта успешно загружена.')
